@@ -30,7 +30,7 @@ export default defineConfig({
         DEFAULT: "#ffffff",
         dark: "#001A2C",
       },
-      brand: { DEFAULT: "#003A61", light: "#00497A" },
+      brand: { DEFAULT: "#7149C6", light: "#00497A" },
       text_white: "#edf2f4",
     },
   },
