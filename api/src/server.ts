@@ -1,11 +1,13 @@
 import fastify, { FastifyLoggerOptions } from "fastify";
 import fastifyEnv from "@fastify/env";
 import { EnvSchema } from "./config/Env.js";
-import routes from "./routes.js";
+import apiRoutes from "./api-routes.js";
 import { DateTime } from "luxon";
 import fastifyCors from "@fastify/cors";
 import { nanoid } from "nanoid";
 import prismaPlugin from "./plugins/prisma.js";
+import fastifyCookie from "@fastify/cookie";
+import type { FastifyCookieOptions } from "@fastify/cookie";
 
 interface EnvOptions {
   development: {
@@ -59,8 +61,10 @@ await app.register(fastifyCors, {
 
 await app.register(prismaPlugin);
 
+await app.register(fastifyCookie, {} as FastifyCookieOptions);
+
 /* Register the routes for our app */
-await app.register(routes, { prefix: "api" });
+await app.register(apiRoutes, { prefix: "api" });
 
 /* Graceful shutdown stuff */
 /* ---------------------------------------------------------- */

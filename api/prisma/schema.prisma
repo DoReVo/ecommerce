@@ -10,29 +10,38 @@ datasource db {
   url      = env("POSTGRES_URL")
 }
 
-model Route {
-  id        String   @id @default(uuid()) @db.Uuid
-  path      String   @unique
-  targets   Json     @db.JsonB
-  tags      Json?    @db.JsonB
+model User {
+  id        String      @id @default(uuid()) @db.Uuid
+  name      String
+  email     String      @unique()
+  password  String
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz()
+  APITokens ApiTokens[]
+
+  @@map("users")
+}
+
+model ApiTokens {
+  token     String   @id
+  userId    String   @map("user_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  events Event[]
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("routes")
+  @@map("api_tokens")
 }
 
-model Event {
-  id          String   @db.Text
-  routeId     String   @map("route_id") @db.Uuid
-  method      String   @db.Text
-  header      Json     @db.JsonB
-  body        Json     @db.JsonB
-  queryString Json     @map("query_string") @db.JsonB
-  timestamp   DateTime @default(now()) @db.Timestamptz()
+// model Event {
+//   id          String   @db.Text
+//   routeId     String   @map("route_id") @db.Uuid
+//   method      String   @db.Text
+//   header      Json     @db.JsonB
+//   body        Json     @db.JsonB
+//   queryString Json     @map("query_string") @db.JsonB
+//   timestamp   DateTime @default(now()) @db.Timestamptz()
 
-  route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
+//   route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
 
-  @@id([id, routeId], map: "composite_primary_key")
-  @@map("events")
-}
+//   @@id([id, routeId], map: "composite_primary_key")
+//   @@map("events")
+// }
