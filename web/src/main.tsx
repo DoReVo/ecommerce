@@ -7,6 +7,7 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+import "virtual:uno.css";
 import HomePage from "./pages/HomePage.tsx";
 import { PageWithNavigationBar } from "./layouts/index.tsx";
 
