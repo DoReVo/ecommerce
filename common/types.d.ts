@@ -1,7 +1,5 @@
+import type { User } from "@prisma/client";
+
 export declare namespace UserRoute {
-  interface User {
-    name: string;
-    email: string;
-    password: string;
-  }
+  export type { User } from "@prisma/client";
 }

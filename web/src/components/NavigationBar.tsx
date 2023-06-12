@@ -1,15 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { createKy } from "../utility";
-
-const ky = createKy();
+import { useUserQuery } from "../queries";
 
 export default function NavigationBar() {
-  const { data } = useQuery({
-    queryKey: ["me"],
-    queryFn: async () => await ky.get("api/users/me").json(),
-    staleTime: 60000,
-  });
+  const { data } = useUserQuery();
 
   return (
     <div className="flex justify-between p-4">
@@ -18,6 +11,7 @@ export default function NavigationBar() {
       <div>Hi {data?.name}</div>
 
       <div className="flex gap-x-2 text-blue-5">
+        <Link to="/">Home</Link>
         <Link to="/register">Register</Link>
         <Link to="/login">Login</Link>
       </div>
