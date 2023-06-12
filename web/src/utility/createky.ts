@@ -1,8 +1,8 @@
-import ky from "ky";
+import kyFactory from "ky";
 import { isEmpty, isNull } from "lodash-es";
 
 export function createKy() {
-  return ky.create({
+  return kyFactory.create({
     prefixUrl: import.meta.env.VITE_API_URL,
     hooks: {
       beforeRequest: [
@@ -16,3 +16,5 @@ export function createKy() {
     },
   });
 }
+
+export const ky = createKy();

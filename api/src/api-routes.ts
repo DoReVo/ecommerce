@@ -7,9 +7,11 @@ import {
   PrismaClientUnknownRequestError,
 } from "@prisma/client/runtime/library.js";
 import userRoutes from "./routes/user-routes.js";
+import productRoutes from "./routes/product-routes.js";
 
 const apiRoutes: FastifyPluginCallback = async (app, _opts) => {
   await app.register(userRoutes, { prefix: "users" });
+  await app.register(productRoutes, { prefix: "products" });
 
   /* Really basic auth */
   app.addHook("preHandler", async (req, res) => {

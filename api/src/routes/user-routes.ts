@@ -30,7 +30,7 @@ const userRoutes: FastifyPluginCallback = async (app, _opts) => {
 
     // save token
 
-    await prisma.apiTokens.create({
+    await prisma.apiToken.create({
       data: {
         token,
         userId: user?.id,
@@ -45,7 +45,7 @@ const userRoutes: FastifyPluginCallback = async (app, _opts) => {
 
     req.log.info("token %s", token);
 
-    const tokenInDb = await prisma.apiTokens.findFirst({
+    const tokenInDb = await prisma.apiToken.findFirst({
       where: { token },
       include: {
         user: true,
