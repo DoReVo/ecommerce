@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model Route {
+  id        String   @id @default(uuid()) @db.Uuid
+  path      String   @unique
+  targets   Json     @db.JsonB
+  tags      Json?    @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  events Event[]
+
+  @@map("routes")
+}
+
+model Event {
+  id          String   @db.Text
+  routeId     String   @map("route_id") @db.Uuid
+  method      String   @db.Text
+  header      Json     @db.JsonB
+  body        Json     @db.JsonB
+  queryString Json     @map("query_string") @db.JsonB
+  timestamp   DateTime @default(now()) @db.Timestamptz()
+
+  route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  @@id([id, routeId], map: "composite_primary_key")
+  @@map("events")
+}
