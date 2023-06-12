@@ -17,6 +17,23 @@ const productRoutes: FastifyPluginCallback = async (app, _opts) => {
     });
   });
 
+  app.put("/:id", async (req, res) => {
+    const { id } = req.params;
+    const { name, description, price, stock } = req.body;
+
+    return await prisma.product.update({
+      data: {
+        name,
+        description,
+        price: Number(price),
+        stock: Number(stock),
+      },
+      where: {
+        id,
+      },
+    });
+  });
+
   app.get("/", async (req, res) => {
     return await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
   });

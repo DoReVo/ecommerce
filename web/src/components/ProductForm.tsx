@@ -3,8 +3,10 @@ import TextInput from "./TextInput";
 import TextAreaInput from "./TextAreaInput";
 import Button from "./Button";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ky } from "../utility";
+import { useAtom } from "jotai";
+import { isEditingProductIDAtom } from "../atoms";
 
 function FormLabel(props: PropsWithChildren) {
   const { children } = props;
@@ -16,8 +18,21 @@ interface ProductFormProps {
 }
 
 function ProductForm(props: ProductFormProps) {
+  const [isEditingID, setIsEditingID] = useAtom(isEditingProductIDAtom);
+
+  const mode: "CREATE" | "EDIT" = isEditingID ? "EDIT" : "CREATE";
+
+  const { data: productData, isLoading: isLoadingProductData } = useQuery({
+    queryKey: ["product", isEditingID],
+    queryFn: async () => await ky.get(`api/products/${isEditingID}`).json(),
+    enabled: mode === "EDIT",
+    refetchOnMount: "always",
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
   const { onCancel } = props;
-  const form = useForm();
+  const form = useForm({ values: productData });
 
   const qClient = useQueryClient();
 
@@ -33,13 +48,24 @@ function ProductForm(props: ProductFormProps) {
     },
   });
 
-  const onSubmitHandler = (data) => {
-    console.log("Submitted", data);
+  const editProductMUT = useMutation({
+    async mutationFn(data) {
+      return await ky.put(`api/products/${isEditingID}`, { json: data }).json();
+    },
+    onSuccess(data) {
+      qClient.invalidateQueries(["product-list"]);
+      qClient.invalidateQueries(["product", isEditingID]);
+      onCancelHandler();
+    },
+  });
 
-    createProductMUT.mutate(data);
+  const onSubmitHandler = (data) => {
+    if (mode === "CREATE") createProductMUT.mutate(data);
+    else editProductMUT.mutate(data);
   };
 
   const onCancelHandler = () => {
+    setIsEditingID(null);
     form.reset();
     if (onCancel) onCancel();
   };
