@@ -3,6 +3,7 @@ import Button from "../components/Button";
 import { Dialog, Modal } from "../components/Modal";
 import { useState } from "react";
 import ProductForm from "../components/ProductForm";
+import { ProductList } from "../components/Product";
 
 function HomePage() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,6 +32,9 @@ function HomePage() {
           Add Products
         </Button>
       </div>
+
+      <h3 className="text-3xl font-bold text-slate-6">Products</h3>
+      <ProductList />
     </div>
   );
 }

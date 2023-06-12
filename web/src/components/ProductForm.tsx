@@ -3,7 +3,7 @@ import TextInput from "./TextInput";
 import TextAreaInput from "./TextAreaInput";
 import Button from "./Button";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ky } from "../utility";
 
 function FormLabel(props: PropsWithChildren) {
@@ -19,11 +19,14 @@ function ProductForm(props: ProductFormProps) {
   const { onCancel } = props;
   const form = useForm();
 
+  const qClient = useQueryClient();
+
   const createProductMUT = useMutation({
     async mutationFn(data) {
       return await ky.post("api/products", { json: data }).json();
     },
     onSuccess(data) {
+      qClient.invalidateQueries(["product-list"]);
       //   setServerMsg({ type: "info", message: JSON.stringify(data) });
       //   router("/login");
       onCancelHandler();
