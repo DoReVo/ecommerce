@@ -46,7 +46,10 @@ function RegisterForm() {
       <FormLabel>Password</FormLabel>
       <TextInput type="password" {...form.register("password")} />
       {!isEmpty(serverMsg) ? <div>{serverMsg?.message}</div> : null}
-      <Button type="submit">Register</Button>
+
+      <div className="mt-4 flex">
+        <Button type="submit" className="grow">Register</Button>
+      </div>
     </form>
   );
 }

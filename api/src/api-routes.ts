@@ -13,11 +13,6 @@ const apiRoutes: FastifyPluginCallback = async (app, _opts) => {
   await app.register(userRoutes, { prefix: "users" });
   await app.register(productRoutes, { prefix: "products" });
 
-  /* Really basic auth */
-  app.addHook("preHandler", async (req, res) => {
-    const token = req?.headers?.authorization;
-  });
-
   app.setErrorHandler((error, _req, res) => {
     const isPrismaError =
       error instanceof PrismaClientRustPanicError ||

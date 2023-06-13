@@ -1,5 +1,6 @@
 import { FastifyPluginCallback } from "fastify";
 import { nanoid } from "nanoid";
+import { authMiddleware } from "../middleware/auth.js";
 
 const userRoutes: FastifyPluginCallback = async (app, _opts) => {
   const { prisma } = app;
@@ -40,24 +41,10 @@ const userRoutes: FastifyPluginCallback = async (app, _opts) => {
     return res.send({ token, user });
   });
 
-  app.get("/me", async (req, res) => {
-    const token = req?.headers?.authorization;
+  app.get("/me", { preHandler: authMiddleware }, async (req, res) => {
+    const user = req?.user;
 
-    req.log.info("token %s", token);
-
-    const tokenInDb = await prisma.apiToken.findFirst({
-      where: { token },
-      include: {
-        user: true,
-      },
-    });
-
-    if (!tokenInDb)
-      return res
-        .status(401)
-        .send({ error: { message: "You are not authorized" } });
-
-    return tokenInDb?.user;
+    return user;
   });
 };
 

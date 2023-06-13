@@ -8,6 +8,9 @@ export function useUserQuery() {
   return useQuery<UserRoute.User>({
     queryKey: ["me"],
     queryFn: async () => await ky.get("api/users/me").json(),
-    staleTime: 60000,
+    enabled: !!localStorage.getItem("API_TOKEN"),
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
 }

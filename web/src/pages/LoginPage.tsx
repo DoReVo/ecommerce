@@ -46,7 +46,11 @@ function LoginForm() {
       <FormLabel>Password</FormLabel>
       <TextInput type="password" {...form.register("password")} />
 
-      <Button type="submit">Login</Button>
+      <div className="flex mt-4">
+        <Button type="submit" className="grow">
+          Login
+        </Button>
+      </div>
     </form>
   );
 }
