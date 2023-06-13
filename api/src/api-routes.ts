@@ -13,6 +13,8 @@ const apiRoutes: FastifyPluginCallback = async (app, _opts) => {
   await app.register(userRoutes, { prefix: "users" });
   await app.register(productRoutes, { prefix: "products" });
 
+  app.decorateRequest("user", null);
+
   app.setErrorHandler((error, _req, res) => {
     const isPrismaError =
       error instanceof PrismaClientRustPanicError ||

@@ -20,7 +20,7 @@ const authMiddleware: preHandlerHookHandler = async (req, res) => {
 
   const user = tokenInDb.user;
 
-  req.server.decorateRequest("user", user);
+  req.user = user;
 };
 
 export { authMiddleware };

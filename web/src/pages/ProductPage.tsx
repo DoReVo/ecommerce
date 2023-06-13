@@ -10,6 +10,7 @@ import {
 } from "../atoms";
 import ProductFormModal from "../components/ProductFormModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
+import { useUserQuery } from "../queries";
 
 function ProductPage() {
   const [isEditingID, setIsEditingID] = useAtom(isEditingProductIDAtom);
@@ -21,6 +22,8 @@ function ProductPage() {
   const navigate = useNavigate();
 
   const qClient = useQueryClient();
+
+  const { data: userData } = useUserQuery();
 
   const { data: product } = useQuery({
     queryKey: ["product", id],
@@ -51,23 +54,25 @@ function ProductPage() {
         Product page
       </h1>
 
-      <>
-        <div className="text-right text-red-5">Administratives action</div>
-        <div className="flex justify-start gap-x-2 border rounded border-red-5 p-4 flex-row-reverse">
-          <Button
-            onPress={onEditPress}
-            className="max-w-fit min-w-20 text-center"
-          >
-            Edit
-          </Button>
-          <Button
-            onPress={onDeletePress}
-            className="max-w-fit min-w-20 text-center bg-red-5"
-          >
-            Delete
-          </Button>
-        </div>
-      </>
+      {userData?.isAdmin ? (
+        <>
+          <div className="text-right text-red-5">Administratives action</div>
+          <div className="flex justify-start gap-x-2 border rounded border-red-5 p-4 flex-row-reverse">
+            <Button
+              onPress={onEditPress}
+              className="max-w-fit min-w-20 text-center"
+            >
+              Edit
+            </Button>
+            <Button
+              onPress={onDeletePress}
+              className="max-w-fit min-w-20 text-center bg-red-5"
+            >
+              Delete
+            </Button>
+          </div>
+        </>
+      ) : null}
 
       <div className="text-left text-slate-8 justify-self-center w-2xl mt-8">
         <h5 className="text-brand text-4xl font-bold">{product?.name}</h5>
