@@ -74,12 +74,12 @@ function ProductForm(props: ProductFormProps) {
     <form className="max-w-md" onSubmit={form.handleSubmit(onSubmitHandler)}>
       <FormLabel>Name</FormLabel>
       <TextInput {...form.register("name")} />
-      <FormLabel>Description</FormLabel>
-      <TextAreaInput {...form.register("description")} />
       <FormLabel>Unit Price (RM)</FormLabel>
       <TextInput type="number" {...form.register("price")} />
-      <FormLabel>Initial Stock</FormLabel>
+      <FormLabel>Stock</FormLabel>
       <TextInput type="number" {...form.register("stock")} />
+      <FormLabel>Description</FormLabel>
+      <TextAreaInput {...form.register("description")} rows={10} />
 
       <div className="flex gap-x-2 flex-row-reverse mt-8">
         <Button className="min-w-20" type="submit">

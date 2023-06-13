@@ -17,7 +17,7 @@ export default defineConfig({
       fonts: {
         sans: ["Domine"],
         serif: ["Atkinson Hyperlegible"],
-        mono: ["Share Tech Mono"],
+        mono: ["Courier Prime"],
       },
     }),
   ],

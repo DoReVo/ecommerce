@@ -22,18 +22,36 @@ function ProductPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <h1 className="font-bold text-xl text-brand">Product Page</h1>
+    <div className="grid">
+      <h1 className="font-bold text-xl text-brand text-xl mb-8">
+        Product page
+      </h1>
 
-      <Button onPress={onEditPress}>Edit</Button>
+      <div className="flex justify-end">
+        <Button
+          onPress={onEditPress}
+          className="max-w-fit min-w-20 text-center"
+        >
+          Edit
+        </Button>
+      </div>
 
-      <div className="text-left">
-        <h5 className="text-brand">{product?.name}</h5>
-        <h5 className="text-brand text-sm whitespace-pre-line">
+      <div className="text-left text-slate-8 justify-self-center w-2xl">
+        <h5 className="text-brand text-4xl font-bold">{product?.name}</h5>
+
+        <div className="mt-8">
+          <div className="text-brand font-bold text-3xl italic">
+            RM {product?.price}
+          </div>
+
+          <div className="bg-brand/85 text-white p-2 rounded w-fit h-fit">
+            {product?.stock} item left
+          </div>
+        </div>
+
+        <h5 className="text-lg mt-4 whitespace-pre-line">
           {product?.description}
         </h5>
-        <div>RM {product?.price}</div>
-        <div>{product?.stock} item left</div>
       </div>
 
       <ProductFormModal />
