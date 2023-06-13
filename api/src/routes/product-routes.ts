@@ -34,6 +34,12 @@ const productRoutes: FastifyPluginCallback = async (app, _opts) => {
     });
   });
 
+  app.delete("/:id", async (req, res) => {
+    const { id } = req.params;
+
+    return await prisma.product.delete({ where: { id: id } });
+  });
+
   app.get("/", async (req, res) => {
     return await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
   });
