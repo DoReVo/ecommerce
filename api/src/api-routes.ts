@@ -8,10 +8,12 @@ import {
 } from "@prisma/client/runtime/library.js";
 import userRoutes from "./routes/user-routes.js";
 import productRoutes from "./routes/product-routes.js";
+import cartRoutes from "./routes/cart-routes.js";
 
 const apiRoutes: FastifyPluginCallback = async (app, _opts) => {
   await app.register(userRoutes, { prefix: "users" });
   await app.register(productRoutes, { prefix: "products" });
+  await app.register(cartRoutes, { prefix: "cart" });
 
   app.decorateRequest("user", null);
 

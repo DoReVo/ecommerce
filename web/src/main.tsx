@@ -15,6 +15,7 @@ import RegisterPage from "./pages/RegisterPage.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import ProductPage from "./pages/ProductPage.tsx";
+import CartPage from "./pages/CartPage.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,12 +25,21 @@ const router = createBrowserRouter(
         <Route path="login" element={<Loginpage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route path="product/:id" element={<ProductPage />} />
+        <Route path="cart" element={<CartPage />} />
       </Route>
     </>
   )
 );
 
-const qClient = new QueryClient();
+const qClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchInterval: 1500,
+      refetchOnMount: true,
+      refetchOnWindowFocus: true,
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

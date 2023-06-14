@@ -14,6 +14,8 @@ import { useUserQuery } from "../queries";
 import TextAreaInput from "../components/TextAreaInput";
 import { useForm } from "react-hook-form";
 import { DateTime } from "luxon";
+import TextInput from "../components/TextInput";
+import { useState } from "react";
 
 function ProductPage() {
   const [isEditingID, setIsEditingID] = useAtom(isEditingProductIDAtom);
@@ -74,6 +76,32 @@ function ProductPage() {
     queryFn: async () => await ky.get(`api/products/${id}/feedbacks`).json(),
   });
 
+  const [amount, setAmount] = useState(0);
+
+  const onPlus = () => {
+    setAmount((cur) => cur + 1);
+  };
+  const onMinus = () => {
+    setAmount((cur) => (cur <= 0 ? 0 : cur - 1));
+  };
+
+  const addToCartMUT = useMutation({
+    mutationFn: async (data) => {
+      return await ky.post("api/cart", { json: data }).json();
+    },
+    onSuccess: () => {
+      qClient.invalidateQueries(["cart"]);
+      setAmount(0);
+    },
+  });
+
+  const onAddToCartPress = () => {
+    addToCartMUT.mutate({
+      productId: product?.id,
+      amount,
+    });
+  };
+
   return (
     <div className="grid">
       <h1 className="font-bold text-xl text-brand text-xl mb-8">
@@ -100,17 +128,48 @@ function ProductPage() {
         </>
       ) : null}
 
-      <div className="text-left text-slate-8 justify-self-center w-2xl mt-8">
-        <h5 className="text-brand text-4xl font-bold">{product?.name}</h5>
+      <div className="text-slate-8 mt-8 font-mono min-h-md">
+        <div className="flex justify-between">
+          <h5 className="text-4xl font-bold">{product?.name}</h5>
+
+          <div className="">
+            <div className="flex gap-x-2 justify-center">
+              <div className="bg-slate-6 text-white p-2 rounded w-fit h-fit">
+                {product?.stock} item left
+              </div>
+              <Button className="h-fit w-fit" onPress={onAddToCartPress}>
+                Add to cart
+              </Button>
+            </div>
+            <div className="mt-2 flex gap-x-2 justify-end items-center">
+              <Button
+                onPress={onMinus}
+                className="w-fit h-fit p-1! rounded-full"
+              >
+                <div className="i-carbon-subtract"></div>
+              </Button>
+
+              <div className="w-30">
+                <TextInput
+                  className="text-center"
+                  type="number"
+                  value={amount}
+                  disabled
+                />
+              </div>
+
+              <Button
+                onPress={onPlus}
+                className="w-fit h-fit p-1! rounded-full"
+              >
+                <div className="i-carbon-add"></div>
+              </Button>
+            </div>
+          </div>
+        </div>
 
         <div className="mt-8">
-          <div className="text-brand font-bold text-3xl italic">
-            RM {product?.price}
-          </div>
-
-          <div className="bg-brand/85 text-white p-2 rounded w-fit h-fit">
-            {product?.stock} item left
-          </div>
+          <div className="font-bold text-3xl italic">RM {product?.price}</div>
         </div>
 
         <h5 className="text-lg mt-4 whitespace-pre-line">
@@ -121,7 +180,9 @@ function ProductPage() {
       <ProductFormModal />
       <ConfirmDeleteModal callback={deleteCallback} />
 
-      <div className="text-xl text-brand font-bold mt-12">Feedbacks</div>
+      <div className="text-xl text-brand font-bold mt-20 border-t py-8">
+        Feedbacks
+      </div>
 
       <form onSubmit={feedbackForm.handleSubmit(onSubmitFeedbackForm)}>
         <TextAreaInput
@@ -130,7 +191,7 @@ function ProductPage() {
           {...feedbackForm.register("text")}
         />
 
-        <Button className="mt-4" type="submit">
+        <Button className="mt-4 w-full" type="submit">
           Submit Feedback
         </Button>
       </form>

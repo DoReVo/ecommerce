@@ -28,6 +28,10 @@ export default function NavigationBar() {
       ) : null}
 
       <div className="flex gap-x-2 text-blue-5">
+      <Link to="/cart" className="p-4">
+          Cart
+        </Link>
+
         <Link to="/" className="p-4">
           Home
         </Link>
