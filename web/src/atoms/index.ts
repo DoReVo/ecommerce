@@ -12,3 +12,5 @@ export const deleteConfirmationModalDataAtom = atom({
     id: "",
   },
 });
+
+export const searchTermAtom = atomWithStorage("SEARCH_TERM", "");

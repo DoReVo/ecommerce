@@ -1,9 +1,10 @@
 import Button from "../components/Button";
 import { ProductList } from "../components/Product";
 import { useAtom } from "jotai";
-import { isOpenProductFormAtom } from "../atoms";
+import { isOpenProductFormAtom, searchTermAtom } from "../atoms";
 import ProductFormModal from "../components/ProductFormModal";
 import { useUserQuery } from "../queries";
+import TextInput from "../components/TextInput";
 
 function HomePage() {
   const { data } = useUserQuery();
@@ -12,6 +13,8 @@ function HomePage() {
   const onAddProductPress = () => {
     setIsOpen(true);
   };
+
+  const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
 
   return (
     <div>
@@ -30,6 +33,16 @@ function HomePage() {
           </div>
         </>
       ) : null}
+
+      <div className="my-4">
+        <div className="text-slate-7 font-mono">Search products</div>
+
+        <TextInput
+          className="border-brand"
+          onChange={(e) => setSearchTerm(e?.target?.value)}
+          value={searchTerm}
+        />
+      </div>
 
       <h3 className="text-4xl font-bold text-brand my-8">Products</h3>
       <ProductList />
