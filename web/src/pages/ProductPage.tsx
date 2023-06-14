@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ky } from "../utility";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "../components/Button";
@@ -11,6 +11,9 @@ import {
 import ProductFormModal from "../components/ProductFormModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import { useUserQuery } from "../queries";
+import TextAreaInput from "../components/TextAreaInput";
+import { useForm } from "react-hook-form";
+import { DateTime } from "luxon";
 
 function ProductPage() {
   const [isEditingID, setIsEditingID] = useAtom(isEditingProductIDAtom);
@@ -47,6 +50,29 @@ function ProductPage() {
     qClient.removeQueries(["product", id]);
     navigate("/");
   };
+
+  const feedbackForm = useForm();
+
+  const createFeedbackMUT = useMutation({
+    mutationFn: async (data) => {
+      return await ky
+        .post(`api/products/${id}/feedbacks`, { json: data })
+        .json();
+    },
+    onSuccess: () => {
+      qClient.invalidateQueries(["product", id, "feedbacks"]);
+      feedbackForm.reset();
+    },
+  });
+
+  const onSubmitFeedbackForm = (data) => {
+    createFeedbackMUT.mutate(data);
+  };
+
+  const { data: feedbackData } = useQuery({
+    queryKey: ["product", id, "feedbacks"],
+    queryFn: async () => await ky.get(`api/products/${id}/feedbacks`).json(),
+  });
 
   return (
     <div className="grid">
@@ -94,6 +120,35 @@ function ProductPage() {
 
       <ProductFormModal />
       <ConfirmDeleteModal callback={deleteCallback} />
+
+      <div className="text-xl text-brand font-bold mt-12">Feedbacks</div>
+
+      <form onSubmit={feedbackForm.handleSubmit(onSubmitFeedbackForm)}>
+        <TextAreaInput
+          rows={5}
+          placeholder="Write what you feel about the product"
+          {...feedbackForm.register("text")}
+        />
+
+        <Button className="mt-4" type="submit">
+          Submit Feedback
+        </Button>
+      </form>
+      <div className="text-lg text-brand font-bold mt-12 italic">
+        What people say
+      </div>
+
+      {feedbackData?.map((entry) => (
+        <div className="shadow-sm p-4 rounded mb-2 border">
+          <div className="text-slate-7 text-lg font-bold tracking-widest">
+            {entry?.user?.name}
+          </div>
+          <div className="mt-4 whitespace-pre-line">{entry?.text}</div>
+          <div className="mt-8">
+            {DateTime.fromISO(entry?.createdAt).toRelative()}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

@@ -1,8 +1,7 @@
 import { FastifyPluginCallback } from "fastify";
 import { nanoid } from "nanoid";
-import { authMiddleware } from "../middleware/auth.js";
 
-const productRoutes: FastifyPluginCallback = async (app, _opts) => {
+const feedbackRoutes: FastifyPluginCallback = async (app, _opts) => {
   const { prisma } = app;
 
   app.post("/", async (req, res) => {
@@ -60,42 +59,6 @@ const productRoutes: FastifyPluginCallback = async (app, _opts) => {
 
     return product;
   });
-
-  // Feedback stuff
-
-  // Create feedback
-  app.post(
-    "/:productId/feedbacks",
-    { preHandler: authMiddleware },
-    async (req, res) => {
-      const { productId } = req.params;
-
-      return await prisma.productFeedback.create({
-        data: {
-          text: req?.body?.text,
-          productId,
-          userId: req.user?.id,
-        },
-      });
-    }
-  );
-
-  app.get("/:productId/feedbacks", async (req, res) => {
-    const { productId } = req.params;
-
-    return await prisma.productFeedback.findMany({
-      where: {
-        productId,
-      },
-      include: {
-        product: true,
-        user: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  });
 };
 
-export default productRoutes;
+export default feedbackRoutes;
