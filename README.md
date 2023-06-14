@@ -5,5 +5,8 @@ web - frontend
 
 # Stack
 
+- Fastify
+- Postgresql
 - NodeJs
 - React
+- UnoCss
