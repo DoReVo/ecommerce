@@ -5,7 +5,7 @@ export function WithNavigation() {
   return (
     <>
       <NavigationBar />
-      <div className="font-sans p-8">
+      <div className="font-sans p-8 max-w-5xl mx-auto">
         <Outlet />
       </div>
     </>
