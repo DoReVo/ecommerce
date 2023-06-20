@@ -34,7 +34,6 @@ const router = createBrowserRouter(
 const qClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchInterval: 1500,
       refetchOnMount: true,
       refetchOnWindowFocus: true,
     },

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createKy } from "../utility";
 import { UserRoute } from "common";
 import { isEmpty, isNull } from "lodash-es";
@@ -15,5 +15,19 @@ export function useUserQuery() {
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
+  });
+}
+
+export function useAddToCartQuery({ successCb }: { successCb?: () => void }) {
+  const qClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data) => {
+      return await ky.post("api/cart", { json: data }).json();
+    },
+    onSuccess: () => {
+      qClient.invalidateQueries(["cart"]);
+      if (successCb) successCb();
+    },
   });
 }

@@ -10,7 +10,7 @@ import {
 } from "../atoms";
 import ProductFormModal from "../components/ProductFormModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
-import { useUserQuery } from "../queries";
+import { useAddToCartQuery, useUserQuery } from "../queries";
 import TextAreaInput from "../components/TextAreaInput";
 import { useForm } from "react-hook-form";
 import { DateTime } from "luxon";
@@ -76,7 +76,7 @@ function ProductPage() {
     queryFn: async () => await ky.get(`api/products/${id}/feedbacks`).json(),
   });
 
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState(1);
 
   const onPlus = () => {
     setAmount((cur) => cur + 1);
@@ -85,12 +85,8 @@ function ProductPage() {
     setAmount((cur) => (cur <= 0 ? 0 : cur - 1));
   };
 
-  const addToCartMUT = useMutation({
-    mutationFn: async (data) => {
-      return await ky.post("api/cart", { json: data }).json();
-    },
-    onSuccess: () => {
-      qClient.invalidateQueries(["cart"]);
+  const addToCartMUT = useAddToCartQuery({
+    successCb: () => {
       setAmount(0);
     },
   });

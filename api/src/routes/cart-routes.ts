@@ -6,7 +6,18 @@ const cartRoutes: FastifyPluginCallback = async (app, _opts) => {
   const { prisma } = app;
 
   app.post("/", { preHandler: authMiddleware }, async (req, res) => {
-    const { productId, amount } = req.body;
+    let { productId, amount } = req.body;
+
+    // Delete
+    if (amount <= 0)
+      return await prisma.userCart.delete({
+        where: {
+          productId_userId: {
+            productId,
+            userId: req?.user?.id,
+          },
+        },
+      });
 
     const cartItem = await prisma.userCart.upsert({
       create: {
@@ -36,10 +47,24 @@ const cartRoutes: FastifyPluginCallback = async (app, _opts) => {
       include: {
         product: true,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
   });
 
-  app.delete("/", async (req, res) => {});
+  app.delete("/", { preHandler: authMiddleware }, async (req, res) => {
+    const { productId } = req.body;
+
+    return await prisma.userCart.delete({
+      where: {
+        productId_userId: {
+          productId,
+          userId: req?.user?.id,
+        },
+      },
+    });
+  });
 };
 
 export default cartRoutes;
