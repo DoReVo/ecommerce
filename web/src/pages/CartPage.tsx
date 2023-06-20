@@ -3,6 +3,7 @@ import { ky } from "../utility";
 import Button from "../components/Button";
 import { useState } from "react";
 import { useAddToCartQuery } from "../queries";
+import { useNavigate } from "react-router-dom";
 
 function CartPage() {
   const [amount, setAmount] = useState(0);
@@ -50,14 +51,17 @@ function CartPage() {
     },
   });
 
+  const navigate = useNavigate();
+
   const onCheckoutPress = () => {
     // Get all product Id
-    checkoutMUT.mutate(productIds);
+    // checkoutMUT.mutate(productIds);
+    navigate("/checkout");
   };
 
   return (
     <div className="max-w-xl mx-auto">
-      <h1 className="text-brand font-3xl font-bold">Your shopping cart</h1>
+      <h1 className="text-brand text-2xl font-bold">Your shopping cart</h1>
 
       {cartData?.map((entry) => (
         <div className="border py-2 px-4 w-fit my-4 rounded flex gap-x-4 w-full items-center justify-between">
