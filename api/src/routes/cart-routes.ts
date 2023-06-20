@@ -5,7 +5,13 @@ import { authMiddleware } from "../middleware/auth.js";
 const cartRoutes: FastifyPluginCallback = async (app, _opts) => {
   const { prisma } = app;
 
-  app.post("/", { preHandler: authMiddleware }, async (req, res) => {
+  app.addHook("preHandler", authMiddleware);
+
+  app.post("/checkout", async (req, res) => {
+    
+  });
+
+  app.post("/", async (req, res) => {
     let { productId, amount } = req.body;
 
     // Delete
@@ -39,7 +45,7 @@ const cartRoutes: FastifyPluginCallback = async (app, _opts) => {
     return { message: "ok" };
   });
 
-  app.get("/", { preHandler: authMiddleware }, async (req, res) => {
+  app.get("/", async (req, res) => {
     return await prisma.userCart.findMany({
       where: {
         userId: req?.user?.id,
@@ -53,7 +59,7 @@ const cartRoutes: FastifyPluginCallback = async (app, _opts) => {
     });
   });
 
-  app.delete("/", { preHandler: authMiddleware }, async (req, res) => {
+  app.delete("/", async (req, res) => {
     const { productId } = req.body;
 
     return await prisma.userCart.delete({
