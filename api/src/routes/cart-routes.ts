@@ -1,5 +1,4 @@
 import { FastifyPluginCallback } from "fastify";
-import { nanoid } from "nanoid";
 import { authMiddleware } from "../middleware/auth.js";
 
 const cartRoutes: FastifyPluginCallback = async (app, _opts) => {
@@ -8,7 +7,43 @@ const cartRoutes: FastifyPluginCallback = async (app, _opts) => {
   app.addHook("preHandler", authMiddleware);
 
   app.post("/checkout", async (req, res) => {
-    
+    // array of product Id to checkout
+    const { products } = req.body;
+
+    const cartData = await prisma.userCart.findMany({
+      where: {
+        userId: req?.user?.id,
+        productId: {
+          in: products,
+        },
+      },
+      include: {
+        product: true,
+      },
+    });
+
+    const total = cartData?.reduce(
+      (prev, curr) => prev + curr?.amount * curr?.product?.price,
+      0
+    );
+
+    // Create checkout
+    await prisma.userCheckout.create({
+      data: {
+        userId: req?.user?.id,
+        amount: total,
+        data: cartData,
+      },
+    });
+
+    // Clear cart
+    await prisma.userCart.deleteMany({
+      where: {
+        userId: req?.user?.id,
+      },
+    });
+
+    return { message: "ok" };
   });
 
   app.post("/", async (req, res) => {

@@ -39,6 +39,19 @@ function CartPage() {
     0
   );
 
+  const productIds = cartData?.map((entry) => entry?.id);
+
+  const checkoutMUT = useMutation({
+    async mutationFn(data) {
+      return await ky.post("api/cart/checkout", { json: data }).json();
+    },
+  });
+
+  const onCheckoutPress = () => {
+    // Get all product Id
+    checkoutMUT.mutate(productIds);
+  };
+
   return (
     <div className="max-w-xl mx-auto">
       <h1 className="text-brand font-3xl font-bold">Your shopping cart</h1>
@@ -89,9 +102,12 @@ function CartPage() {
         <div>RM {total}</div>
       </div>
 
-      <Button className="w-full flex items-center gap-x-2 justify-center">
+      <Button
+        className="w-full flex items-center gap-x-2 justify-center"
+        onPress={onCheckoutPress}
+      >
         <div className="i-carbon-shopping-cart" />
-        Checkout
+        <div>Checkout</div>
       </Button>
     </div>
   );

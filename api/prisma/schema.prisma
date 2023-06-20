@@ -20,6 +20,7 @@ model User {
   APITokens       ApiToken[]
   ProductFeedback ProductFeedback[]
   UserCart        UserCart[]
+  UserCheckout    UserCheckout[]
 
   @@map("users")
 }
@@ -73,17 +74,14 @@ model UserCart {
   @@map("user_cart")
 }
 
-// model Event {
-//   id          String   @db.Text
-//   routeId     String   @map("route_id") @db.Uuid
-//   method      String   @db.Text
-//   header      Json     @db.JsonB
-//   body        Json     @db.JsonB
-//   queryString Json     @map("query_string") @db.JsonB
-//   timestamp   DateTime @default(now()) @db.Timestamptz()
+model UserCheckout {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  amount    Int
+  data      Json     @db.Json
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-//   route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-//   @@id([id, routeId], map: "composite_primary_key")
-//   @@map("events")
-// }
+  @@map("user_checkout")
+}
