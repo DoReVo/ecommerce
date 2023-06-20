@@ -94,6 +94,8 @@ const cartRoutes: FastifyPluginCallback = async (app, _opts) => {
     });
   });
 
+  app.get("/summary", async (req, res) => {});
+
   app.delete("/", async (req, res) => {
     const { productId } = req.body;
 

@@ -25,7 +25,8 @@
     "react-hook-form": "^7.44.3",
     "react-router-dom": "^6.12.1",
     "react-stately": "^3.23.0",
-    "react-use": "^17.4.0"
+    "react-use": "^17.4.0",
+    "recharts": "^2.7.1"
   },
   "devDependencies": {
     "@iconify/json": "^2.2.77",

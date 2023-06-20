@@ -18,7 +18,7 @@ export default function NavigationBar() {
   };
 
   return (
-    <div className="flex justify-between py-4 px-8">
+    <div className="flex justify-between py-4 px-8 border-b border-slate-2">
       <h1>Ecommerce</h1>
 
       {isLoggedIn ? (
@@ -28,7 +28,13 @@ export default function NavigationBar() {
       ) : null}
 
       <div className="flex gap-x-2 text-blue-5">
-      <Link to="/cart" className="p-4">
+        {data?.isAdmin ? (
+          <Link to="/sales-dashboard" className="p-4">
+            Sales Dashboard
+          </Link>
+        ) : null}
+
+        <Link to="/cart" className="p-4">
           Cart
         </Link>
 
