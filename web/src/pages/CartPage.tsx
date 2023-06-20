@@ -45,6 +45,9 @@ function CartPage() {
     async mutationFn(data) {
       return await ky.post("api/cart/checkout", { json: data }).json();
     },
+    onSuccess: () => {
+      qClient.invalidateQueries(["cart"]);
+    },
   });
 
   const onCheckoutPress = () => {
@@ -98,7 +101,7 @@ function CartPage() {
       ))}
 
       <div className="flex justify-between items-center font-bold text-3xl text-slate-7 mt-8">
-        <div>Total</div>
+        <div>TOTAL</div>
         <div>RM {total}</div>
       </div>
 
