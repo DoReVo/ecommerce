@@ -8,7 +8,12 @@ const summaryRoutes: FastifyPluginCallback = async (app, _opts) => {
 
   app.get("/", async (req, res) => {
     const data = await prisma.userCheckout.findMany({
-      include: { user: true },
+      include: {
+        user: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     const total = await prisma.userCheckout.aggregate({
@@ -17,7 +22,21 @@ const summaryRoutes: FastifyPluginCallback = async (app, _opts) => {
       },
     });
 
-    return { total, checkoutData: data };
+    return { total: total._sum.amount, checkoutData: data };
+  });
+
+  /* Get sales history */
+  app.get("/purchase-history", async (req, res) => {
+    const data = await prisma.userCheckout.findMany({
+      include: {
+        user: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return data;
   });
 };
 
