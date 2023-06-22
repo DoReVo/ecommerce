@@ -66,7 +66,10 @@ const productRoutes: FastifyPluginCallback = async (app, _opts) => {
 
   /* Read all products */
   app.get("/", async (req, res) => {
-    return await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
+    return await prisma.product.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { productImages: true },
+    });
   });
 
   /* Read 1 product */
