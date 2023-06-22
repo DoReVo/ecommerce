@@ -1,14 +1,21 @@
 import { FastifyPluginCallback } from "fastify";
 import { nanoid } from "nanoid";
 import { authMiddleware } from "../middleware/auth.js";
+import util from "util";
+import { pipeline } from "stream";
+import fs from "fs";
+import { isArray, isEmpty } from "lodash-es";
+
+const pump = util.promisify(pipeline);
 
 const productRoutes: FastifyPluginCallback = async (app, _opts) => {
   const { prisma } = app;
 
+  /* Create product */
   app.post("/", async (req, res) => {
-    const { name, description, price, stock } = req.body;
+    const { name, description, price, stock, images } = req.body;
 
-    return await prisma.product.create({
+    const productData = await prisma.product.create({
       data: {
         name,
         description,
@@ -16,6 +23,22 @@ const productRoutes: FastifyPluginCallback = async (app, _opts) => {
         stock: Number(stock),
       },
     });
+
+    // Connect images
+    if (!isEmpty(images) && isArray(images)) {
+      let imagesEntry = await prisma.temporaryFiles.findMany({
+        where: {
+          id: { in: images },
+        },
+      });
+
+      imagesEntry = imagesEntry?.map((entry) => ({
+        ...entry,
+        productId: productData?.id,
+      }));
+
+      await prisma.productImages.createMany({ data: imagesEntry });
+    }
   });
 
   app.put("/:id", async (req, res) => {
@@ -41,10 +64,12 @@ const productRoutes: FastifyPluginCallback = async (app, _opts) => {
     return await prisma.product.delete({ where: { id: id } });
   });
 
+  /* Read all products */
   app.get("/", async (req, res) => {
     return await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
   });
 
+  /* Read 1 product */
   app.get("/:id", async (req, res) => {
     const { id } = req.params;
 
@@ -53,6 +78,9 @@ const productRoutes: FastifyPluginCallback = async (app, _opts) => {
         id,
       },
       orderBy: { createdAt: "desc" },
+      include: {
+        productImages: true,
+      },
     });
 
     if (!product)
@@ -62,7 +90,7 @@ const productRoutes: FastifyPluginCallback = async (app, _opts) => {
   });
 
   // Feedback stuff
-
+  // ---------------------------------------------
   // Create feedback
   app.post(
     "/:productId/feedbacks",
@@ -95,6 +123,36 @@ const productRoutes: FastifyPluginCallback = async (app, _opts) => {
         createdAt: "desc",
       },
     });
+  });
+  // ---------------------------------------------
+
+  // Images stuff
+  // ---------------------------------------------
+
+  app.post("/images", { preHandler: authMiddleware }, async (req, res) => {
+    const files = req.files();
+
+    const fileData: any = [];
+
+    for await (const file of files) {
+      const id = nanoid();
+      const path = `artifacts/temporary/${id}`;
+
+      const record = await prisma.temporaryFiles.create({
+        data: {
+          id,
+          fileName: file.filename,
+          mimeType: file.mimetype,
+          filePath: path,
+        },
+      });
+
+      fileData.push(record);
+
+      await pump(file.file, fs.createWriteStream(path));
+    }
+
+    return fileData;
   });
 };
 

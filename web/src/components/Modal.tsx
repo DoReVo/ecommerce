@@ -28,14 +28,14 @@ export function Modal(props: PropsWithChildren<ModalProps>) {
   return (
     <Overlay>
       <div
-        className="fixed inset-0 flex justify-center z-100 bg-slate-800/50 items-center"
+        className="fixed inset-0 w-screen justify-center z-100 bg-slate-800/50 items-center overflow-auto"
         {...underlayProps}
       >
         <div
           {...modalProps}
           ref={ref}
           className={cls(
-            "shadow-2xl2 z-1 h-fit relative focus:outline-none font-sans",
+            "shadow-2xl2 z-1 h-fit relative focus:outline-none font-sans h-full w-full",
             {
               dark: isDarkMode,
             }
@@ -70,16 +70,19 @@ export function Dialog(props: PropsWithChildren<DialogProps>) {
       {...dialogProps}
       ref={ref}
       className={cls(
-        "outline-none dark:bg-canvas-dark dark:text-white rounded bg-canvas",
+        "outline-none dark:bg-canvas-dark dark:text-white rounded bg-canvas relative w-fit inset-y-50 m-auto",
         {
           [`${className}`]: !isEmpty(className),
         }
       )}
     >
-      <h3 {...titleProps} className="text-lg font-bold text-left text-brand">
+      <h3
+        {...titleProps}
+        className="text-lg font-bold text-left text-brand w-fit"
+      >
         {props.title}
       </h3>
-      <div>{children}</div>
+      <div className="">{children}</div>
     </div>
   );
 }

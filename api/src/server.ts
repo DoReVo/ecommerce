@@ -8,6 +8,8 @@ import { nanoid } from "nanoid";
 import prismaPlugin from "./plugins/prisma.js";
 import fastifyCookie from "@fastify/cookie";
 import type { FastifyCookieOptions } from "@fastify/cookie";
+import fastifyMultipart from "@fastify/multipart";
+import fs from "fs/promises";
 
 interface EnvOptions {
   development: {
@@ -62,6 +64,16 @@ await app.register(fastifyCors, {
 await app.register(prismaPlugin);
 
 await app.register(fastifyCookie, {} as FastifyCookieOptions);
+
+// Create upload directory
+await fs.mkdir("artifacts/temporary", { recursive: true });
+await fs.mkdir("artifacts/images", { recursive: true });
+
+await app.register(fastifyMultipart, {
+  limits: {
+    fileSize: 50000000,
+  },
+});
 
 /* Register the routes for our app */
 await app.register(apiRoutes, { prefix: "api" });

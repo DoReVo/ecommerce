@@ -44,6 +44,7 @@ model Product {
   createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamptz()
   ProductFeedback ProductFeedback[]
   UserCart        UserCart[]
+  productImages   ProductImages[]
 
   @@map("products")
 }
@@ -84,4 +85,27 @@ model UserCheckout {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_checkout")
+}
+
+model TemporaryFiles {
+  id        String   @id @db.Text
+  fileName  String   @db.Text
+  filePath  String
+  mimeType  String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@map("temporary_files")
+}
+
+model ProductImages {
+  id        String @id @db.Text
+  productId String @map("product_id") @db.Uuid
+  fileName  String   @db.Text
+  filePath  String
+  mimeType  String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_images")
 }

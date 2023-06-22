@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useRef, useState } from "react";
 import TextInput from "./TextInput";
 import TextAreaInput from "./TextAreaInput";
 import Button from "./Button";
@@ -7,6 +7,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ky } from "../utility";
 import { useAtom } from "jotai";
 import { isEditingProductIDAtom } from "../atoms";
+import { useFileUpload } from "react-use-file-upload/dist/lib/useFileUpload";
+import { isEmpty } from "lodash-es";
 
 function FormLabel(props: PropsWithChildren) {
   const { children } = props;
@@ -36,8 +38,19 @@ function ProductForm(props: ProductFormProps) {
 
   const qClient = useQueryClient();
 
+  const { setFiles, fileNames, files, removeFile, createFormData } =
+    useFileUpload();
+
   const createProductMUT = useMutation({
     async mutationFn(data) {
+      if (!isEmpty(files)) {
+        const uploadRes = await uploadFiles();
+
+        const listOfIds = uploadRes?.map((entry) => entry?.id);
+
+        data.images = listOfIds;
+      }
+
       return await ky.post("api/products", { json: data }).json();
     },
     onSuccess(data) {
@@ -59,9 +72,18 @@ function ProductForm(props: ProductFormProps) {
     },
   });
 
+  async function uploadFiles() {
+    const formData = createFormData();
+    const res = ky.post("api/products/images", { body: formData }).json();
+
+    return res;
+  }
+
   const onSubmitHandler = (data) => {
-    if (mode === "CREATE") createProductMUT.mutate(data);
-    else editProductMUT.mutate(data);
+    if (mode === "CREATE") {
+      // Upload files
+      createProductMUT.mutate(data);
+    } else editProductMUT.mutate(data);
   };
 
   const onCancelHandler = () => {
@@ -70,8 +92,80 @@ function ProductForm(props: ProductFormProps) {
     if (onCancel) onCancel();
   };
 
+  const fileInputRef = useRef(null);
+
+  const onPressChooseImage = () => {
+    fileInputRef?.current?.click();
+  };
+
+  function createUrl(file) {
+    return URL.createObjectURL(file);
+  }
+
+  const [imageIndex, setImageIndex] = useState(0);
+
+  const onNextImage = () =>
+    setImageIndex((state) =>
+      state + 1 <= files.length - 1 ? state + 1 : state
+    );
+  const onPrevImage = () =>
+    setImageIndex((state) => (state - 1 < 0 ? 0 : state - 1));
+
+  const imageFileToDisplay = files?.at(imageIndex);
+
+  function removeImage() {
+    onPrevImage();
+    removeFile(imageIndex);
+  }
+
   return (
     <form className="max-w-md" onSubmit={form.handleSubmit(onSubmitHandler)}>
+      {!isEmpty(files) ? (
+        <div className="">
+          <div className="flex justify-center items-center flex-col">
+            <img
+              className="aspect-video max-h-300px"
+              src={createUrl(imageFileToDisplay)}
+            />
+            <div className="text-md my-2 flex gap-x-4 items-center justify-center">
+              <Button
+                className="!p-0 text-brand bg-inherit flex gap-x-2"
+                onPress={removeImage}
+              >
+                <div className="text-slate-7">{imageFileToDisplay?.name}</div>
+
+                <div className="i-carbon-close-outline"></div>
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex gap-x-4 justify-center items-center my-4">
+            <Button className="text-xs !p-1 bg-gray-4" onPress={onPrevImage}>
+              <div className="i-carbon-chevron-left"></div>
+            </Button>
+            <Button className="text-xs !p-1 bg-gray-4" onPress={onNextImage}>
+              <div className="i-carbon-chevron-right"></div>
+            </Button>
+          </div>
+        </div>
+      ) : null}
+      <div className="flex justify-center items-center">
+        <Button className="text-xs" onPress={onPressChooseImage}>
+          Choose images
+        </Button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          style={{ display: "none" }}
+          onChange={(e) => {
+            setFiles(e, "a");
+            setImageIndex(0);
+            fileInputRef.current.value = null;
+          }}
+        />
+      </div>
+
       <FormLabel>Name</FormLabel>
       <TextInput {...form.register("name")} />
       <FormLabel>Unit Price (RM)</FormLabel>

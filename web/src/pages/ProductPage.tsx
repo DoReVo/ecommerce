@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { DateTime } from "luxon";
 import TextInput from "../components/TextInput";
 import { useState } from "react";
+import { isEmpty } from "lodash-es";
 
 function ProductPage() {
   const [isEditingID, setIsEditingID] = useAtom(isEditingProductIDAtom);
@@ -98,6 +99,19 @@ function ProductPage() {
     });
   };
 
+  const [imageIndex, setImageIndex] = useState(0);
+
+  const files = product?.productImages;
+
+  const onNextImage = () =>
+    setImageIndex((state) =>
+      state + 1 <= files?.length - 1 ? state + 1 : state
+    );
+  const onPrevImage = () =>
+    setImageIndex((state) => (state - 1 < 0 ? 0 : state - 1));
+
+  const imageToDisplay = files?.at(imageIndex);
+
   return (
     <div className="grid">
       <h1 className="font-bold text-xl text-brand text-xl mb-8">
@@ -122,6 +136,27 @@ function ProductPage() {
             </Button>
           </div>
         </>
+      ) : null}
+
+      {!isEmpty(product?.productImages) ? (
+        <div className="flex justify-center items-center my-4 flex-col">
+          <img
+            className="aspect-video max-h-300px"
+            src={`${import.meta.env.VITE_API_URL}/api/images/product-image/${
+              imageToDisplay?.id
+            }/${imageToDisplay?.fileName}`}
+          ></img>
+          <div className="text-slate-7">{imageToDisplay?.fileName}</div>
+
+          <div className="flex gap-x-4 justify-center items-center my-4">
+            <Button className="text-xs !p-1 bg-gray-4" onPress={onPrevImage}>
+              <div className="i-carbon-chevron-left"></div>
+            </Button>
+            <Button className="text-xs !p-1 bg-gray-4" onPress={onNextImage}>
+              <div className="i-carbon-chevron-right"></div>
+            </Button>
+          </div>
+        </div>
       ) : null}
 
       <div className="text-slate-8 mt-8 font-mono min-h-md">

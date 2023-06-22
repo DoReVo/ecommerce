@@ -10,12 +10,14 @@ import userRoutes from "./routes/user-routes.js";
 import productRoutes from "./routes/product-routes.js";
 import cartRoutes from "./routes/cart-routes.js";
 import summaryRoutes from "./routes/summary-routes.js";
+import imagesRoutes from "./routes/images-routes.js";
 
 const apiRoutes: FastifyPluginCallback = async (app, _opts) => {
   await app.register(userRoutes, { prefix: "users" });
   await app.register(productRoutes, { prefix: "products" });
   await app.register(cartRoutes, { prefix: "cart" });
   await app.register(summaryRoutes, { prefix: "summary" });
+  await app.register(imagesRoutes, { prefix: "images" });
 
   app.decorateRequest("user", null);
 
