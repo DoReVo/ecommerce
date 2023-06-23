@@ -11,7 +11,8 @@
     "migrate-db": "node script/migrate-db.js",
     "dev": "nodemon",
     "prisma:migrate": "npx prisma migrate dev",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "prisma:deploy": "prisma migrate deploy"
   },
   "repository": {
     "type": "git",
