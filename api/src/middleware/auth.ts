@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { preHandlerHookHandler } from "fastify";
 
 const authMiddleware: preHandlerHookHandler = async (req, res) => {

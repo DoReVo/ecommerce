@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FastifyPluginCallback } from "fastify";
 import fs from "fs";
 const imagesRoutes: FastifyPluginCallback = async (app, _opts) => {

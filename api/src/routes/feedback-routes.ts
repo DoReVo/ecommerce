@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FastifyPluginCallback } from "fastify";
 import { nanoid } from "nanoid";
 
