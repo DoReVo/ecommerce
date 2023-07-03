@@ -38,9 +38,11 @@ export default function NavigationBar() {
           Home
         </Link>
 
-        <Link to="/cart" className="p-4">
-          Cart
-        </Link>
+        {!data?.isAdmin ? (
+          <Link to="/cart" className="p-4">
+            Cart
+          </Link>
+        ) : null}
 
         {!isLoggedIn ? (
           <>
