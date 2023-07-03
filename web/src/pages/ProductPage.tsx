@@ -211,21 +211,25 @@ function ProductPage() {
       <ProductFormModal />
       <ConfirmDeleteModal callback={deleteCallback} />
 
-      <div className="text-xl text-brand font-bold mt-20 border-t py-8">
-        Feedbacks
-      </div>
+      {userData?.id ? (
+        <>
+          <div className="text-xl text-brand font-bold mt-20 border-t py-8">
+            Feedbacks
+          </div>
+          <form onSubmit={feedbackForm.handleSubmit(onSubmitFeedbackForm)}>
+            <TextAreaInput
+              rows={5}
+              placeholder="Write what you feel about the product"
+              {...feedbackForm.register("text")}
+            />
 
-      <form onSubmit={feedbackForm.handleSubmit(onSubmitFeedbackForm)}>
-        <TextAreaInput
-          rows={5}
-          placeholder="Write what you feel about the product"
-          {...feedbackForm.register("text")}
-        />
+            <Button className="mt-4 w-full" type="submit">
+              Submit Feedback
+            </Button>
+          </form>
+        </>
+      ) : null}
 
-        <Button className="mt-4 w-full" type="submit">
-          Submit Feedback
-        </Button>
-      </form>
       <div className="text-lg text-brand font-bold mt-12 italic">
         What people say
       </div>
