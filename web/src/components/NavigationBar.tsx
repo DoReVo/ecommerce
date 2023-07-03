@@ -51,7 +51,7 @@ export default function NavigationBar() {
           Home
         </Link>
 
-        {!data?.isAdmin ? (
+        {data?.id && !data?.isAdmin ? (
           <Link to="/cart" className="p-4">
             Cart
           </Link>
