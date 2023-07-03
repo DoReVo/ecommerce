@@ -18,8 +18,10 @@ export default function NavigationBar() {
   };
 
   return (
-    <div className="flex justify-between py-4 px-8 border-b border-slate-2 w-full">
-      <h1>Ecommerce</h1>
+    <div className="flex justify-between py-2 px-8 border-b border-slate-2 w-full">
+      <div className="max-w-35">
+        <img src="/logo.png"></img>
+      </div>
 
       {isLoggedIn ? (
         <div className="p-4 text-lg font-bold text-brand font-mono">
