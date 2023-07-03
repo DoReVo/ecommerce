@@ -168,34 +168,42 @@ function ProductPage() {
               <div className="bg-slate-6 text-white p-2 rounded w-fit h-fit">
                 {product?.stock} item left
               </div>
-              <Button className="h-fit w-fit" onPress={onAddToCartPress}>
-                Add to cart
-              </Button>
-            </div>
-            <div className="mt-2 flex gap-x-2 justify-end items-center">
-              <Button
-                onPress={onMinus}
-                className="w-fit h-fit p-1! rounded-full"
-              >
-                <div className="i-carbon-subtract"></div>
-              </Button>
 
-              <div className="w-30">
-                <TextInput
-                  className="text-center"
-                  type="number"
-                  value={amount}
-                  disabled
-                />
-              </div>
-
-              <Button
-                onPress={onPlus}
-                className="w-fit h-fit p-1! rounded-full"
-              >
-                <div className="i-carbon-add"></div>
-              </Button>
+              {userData?.id ? (
+                <Button className="h-fit w-fit" onPress={onAddToCartPress}>
+                  Add to cart
+                </Button>
+              ) : null}
             </div>
+
+            {userData?.id ? (
+              <>
+                <div className="mt-2 flex gap-x-2 justify-end items-center">
+                  <Button
+                    onPress={onMinus}
+                    className="w-fit h-fit p-1! rounded-full"
+                  >
+                    <div className="i-carbon-subtract"></div>
+                  </Button>
+
+                  <div className="w-30">
+                    <TextInput
+                      className="text-center"
+                      type="number"
+                      value={amount}
+                      disabled
+                    />
+                  </div>
+
+                  <Button
+                    onPress={onPlus}
+                    className="w-fit h-fit p-1! rounded-full"
+                  >
+                    <div className="i-carbon-add"></div>
+                  </Button>
+                </div>
+              </>
+            ) : null}
           </div>
         </div>
 
