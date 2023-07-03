@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { useForm } from "react-hook-form";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
@@ -17,6 +17,8 @@ function FormLabel(props: PropsWithChildren) {
 function LoginForm() {
   const form = useForm<Pick<UserRoute.User, "email" | "password">>();
 
+  const [isVisibleServerError, setIsVisibleServerError] = useState(false);
+
   const router = useNavigate();
 
   const qClient = useQueryClient();
@@ -29,6 +31,9 @@ function LoginForm() {
       qClient.setQueryData(["me"], data?.user);
       localStorage.setItem("API_TOKEN", data?.token);
       router("/");
+    },
+    onError: () => {
+      setIsVisibleServerError(true);
     },
   });
 
@@ -46,6 +51,11 @@ function LoginForm() {
       <FormLabel>Password</FormLabel>
       <TextInput type="password" {...form.register("password")} />
 
+      {isVisibleServerError ? (
+        <div className="mt-4 text-red-5 bg-red-1 p-2 rounded">
+          Login failed! Incorrect email or password.
+        </div>
+      ) : null}
       <div className="flex mt-4">
         <Button type="submit" className="grow">
           Login
