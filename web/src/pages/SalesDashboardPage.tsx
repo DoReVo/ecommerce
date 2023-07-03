@@ -3,6 +3,7 @@ import { ky } from "../utility";
 import { DateTime } from "luxon";
 import { useState } from "react";
 import { usePress } from "react-aria";
+import { useUserQuery } from "../queries";
 
 function PurchaseDataCard({ data }) {
   const [expanded, setExpanded] = useState(false);
@@ -44,24 +45,44 @@ function PurchaseDataCard({ data }) {
 }
 
 function SalesDashboardPage() {
+  const { data: userData } = useUserQuery();
+
+  const isAdmin = userData?.isAdmin;
+
   const { data: purchaseHistoryData } = useQuery({
     queryKey: ["purchase-history"],
     queryFn: async () => {
       return await ky.get("api/summary").json();
     },
+    select(data) {
+      if (isAdmin) return data;
+
+      // Filter only for user
+      const newData = data?.checkoutData?.filter(
+        (entry) => entry?.userId === userData?.id
+      );
+
+      return { ...data, checkoutData: newData };
+    },
   });
 
   return (
     <div className="max-w-xl mx-auto">
-      <h1 className="text-brand font-bold text-2xl mb-4">Sales Dashboard</h1>
-
-      <h3 className="text-brand text-xl font-bold mb-4 py-2">Total Profit</h3>
-
-      <div className="flex justify-center items-center my-8">
-        <div className="font-bold text-6xl text-slate-7 text-center m-4 w-fit p-4 border-b-4 border-brand-light">
-          RM {purchaseHistoryData?.total}
-        </div>
-      </div>
+      {isAdmin ? (
+        <>
+          <h1 className="text-brand font-bold text-2xl mb-4">
+            Sales Dashboard
+          </h1>
+          <h3 className="text-brand text-xl font-bold mb-4 py-2">
+            Total Profit
+          </h3>
+          <div className="flex justify-center items-center my-8">
+            <div className="font-bold text-6xl text-slate-7 text-center m-4 w-fit p-4 border-b-4 border-brand-light">
+              RM {purchaseHistoryData?.total}
+            </div>
+          </div>
+        </>
+      ) : null}
 
       <h3 className="text-brand text-xl font-bold mb-4 py-2">
         Customer Purchase History

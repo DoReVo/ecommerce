@@ -30,9 +30,15 @@ export default function NavigationBar() {
       ) : null}
 
       <div className="flex gap-x-2 text-blue-5">
-        {data?.isAdmin ? (
+        {data?.id && data?.isAdmin ? (
           <Link to="/sales-dashboard" className="p-4">
             Sales Dashboard
+          </Link>
+        ) : null}
+
+        {data?.id && !data?.isAdmin ? (
+          <Link to="/purchase-history" className="p-4">
+            Purchase History
           </Link>
         ) : null}
 
@@ -56,12 +62,14 @@ export default function NavigationBar() {
             </Link>
           </>
         ) : (
-          <Button
-            className="text-brand bg-inherit p-0 m-0"
-            onPress={onPressLogout}
-          >
-            Logout
-          </Button>
+          <div className="p-4">
+            <Button
+              className="text-brand bg-inherit p-0! m-0"
+              onPress={onPressLogout}
+            >
+              Logout
+            </Button>
+          </div>
         )}
       </div>
     </div>
