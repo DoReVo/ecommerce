@@ -1,7 +1,7 @@
 function Footer() {
   return (
     <div className="bg-brand-light p-4 text-white w-full flex justify-around font-sans items-center">
-      <div className="font-bold text-lg">Mesrinah Sdn Bhd.</div>
+      <div className="font-bold text-lg">Mesrinah Food Enterprise</div>
 
       <div>
         <div className="text-lg font-bold ">Branches</div>

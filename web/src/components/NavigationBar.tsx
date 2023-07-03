@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUserQuery } from "../queries";
 import { isEmpty } from "lodash-es";
 import Button from "./Button";
@@ -11,16 +11,21 @@ export default function NavigationBar() {
 
   const isLoggedIn = !isEmpty(data);
 
+  const nav = useNavigate();
+
   const onPressLogout = () => {
     qClient.resetQueries(["me"]);
     qClient.removeQueries(["me"]);
     localStorage.removeItem("API_TOKEN");
+
+    nav("/");
   };
 
   return (
     <div className="flex justify-between py-2 px-8 border-b border-slate-2 w-full">
-      <div className="max-w-35">
-        <img src="/logo.png"></img>
+      <div className="flex justify-center items-center text-center">
+        <img className="max-w-35" src="/logo.png"></img>
+        <div className="w-full">Mesrinah Food Enterprise</div>
       </div>
 
       {isLoggedIn ? (
