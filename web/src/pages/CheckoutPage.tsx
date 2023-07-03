@@ -26,7 +26,9 @@ function CheckoutPage() {
     },
     onSuccess: () => {
       qClient.invalidateQueries(["cart"]);
-      navigate("/");
+      navigate("/", {
+        state: { shouldShowCheckoutSuccess: true },
+      });
     },
   });
 

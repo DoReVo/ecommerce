@@ -5,6 +5,43 @@ import { isOpenProductFormAtom, searchTermAtom } from "../atoms";
 import ProductFormModal from "../components/ProductFormModal";
 import { useUserQuery } from "../queries";
 import TextInput from "../components/TextInput";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useOverlayTriggerState } from "react-stately";
+import { Dialog, Modal } from "../components/Modal";
+
+function CheckoutSuccessModal() {
+  const { state: routeState } = useLocation();
+  const navigate = useNavigate();
+
+  const state = useOverlayTriggerState({
+    defaultOpen: routeState?.shouldShowCheckoutSuccess,
+  });
+
+  function close() {
+    navigate("/", { state: null });
+    state.close();
+  }
+
+  if (!state.isOpen) return null;
+
+  return (
+    <Modal state={state}>
+      <Dialog
+        title="Checkout Successful"
+        className="px-8 py-8 rounded min-w-sm"
+      >
+        <div className="w-xs mt-4">
+          Thank you for purchasing with us, we will ship your order soon.
+        </div>
+        <div className="mt-8 flex gap-x-2 flex-row-reverse">
+          <Button className="w-24" onPress={close}>
+            Ok
+          </Button>
+        </div>
+      </Dialog>
+    </Modal>
+  );
+}
 
 function HomePage() {
   const { data } = useUserQuery();
@@ -46,6 +83,8 @@ function HomePage() {
 
       <h3 className="text-4xl font-bold text-brand my-8">Products</h3>
       <ProductList />
+
+      <CheckoutSuccessModal />
     </div>
   );
 }
