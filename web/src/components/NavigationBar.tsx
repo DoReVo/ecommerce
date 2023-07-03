@@ -34,12 +34,12 @@ export default function NavigationBar() {
           </Link>
         ) : null}
 
-        <Link to="/cart" className="p-4">
-          Cart
-        </Link>
-
         <Link to="/" className="p-4">
           Home
+        </Link>
+
+        <Link to="/cart" className="p-4">
+          Cart
         </Link>
 
         {!isLoggedIn ? (
