@@ -40,15 +40,33 @@ function RegisterForm() {
   return (
     <form className="max-w-md" onSubmit={form.handleSubmit(onSubmitHandler)}>
       <FormLabel>Name</FormLabel>
-      <TextInput {...form.register("name")} />
+      <TextInput
+        {...form.register("name", { required: "Field is required" })}
+      />
+      <div className="text-red-5 text-sm">
+        {form?.formState?.errors?.name?.message ?? null}
+      </div>
       <FormLabel>Email</FormLabel>
-      <TextInput {...form.register("email")} />
+      <TextInput
+        {...form.register("email", { required: "Field is required" })}
+      />
+      <div className="text-red-5 text-sm">
+        {form?.formState?.errors?.name?.message ?? null}
+      </div>
       <FormLabel>Password</FormLabel>
-      <TextInput type="password" {...form.register("password")} />
+      <TextInput
+        type="password"
+        {...form.register("password", { required: "Field is required" })}
+      />
+      <div className="text-red-5 text-sm">
+        {form?.formState?.errors?.name?.message ?? null}
+      </div>
       {!isEmpty(serverMsg) ? <div>{serverMsg?.message}</div> : null}
 
       <div className="mt-4 flex">
-        <Button type="submit" className="grow">Register</Button>
+        <Button type="submit" className="grow">
+          Register
+        </Button>
       </div>
     </form>
   );

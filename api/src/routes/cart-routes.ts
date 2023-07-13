@@ -9,14 +9,11 @@ const cartRoutes: FastifyPluginCallback = async (app, _opts) => {
 
   app.post("/checkout", async (req, res) => {
     // array of product Id to checkout
-    const { products } = req.body;
+    const { products, address } = req.body;
 
     const cartData = await prisma.userCart.findMany({
       where: {
         userId: req?.user?.id,
-        productId: {
-          in: products,
-        },
       },
       include: {
         product: true,
@@ -34,6 +31,7 @@ const cartRoutes: FastifyPluginCallback = async (app, _opts) => {
         userId: req?.user?.id,
         amount: total,
         data: cartData,
+        address,
       },
     });
 

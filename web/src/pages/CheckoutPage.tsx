@@ -3,6 +3,9 @@ import { ky } from "../utility";
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import TextAreaInput from "../components/TextAreaInput";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 
 function CheckoutPage() {
   const qClient = useQueryClient();
@@ -16,7 +19,11 @@ function CheckoutPage() {
     0
   );
 
+  const [addr, setAddr] = useState("");
+
   const productIds = cartData?.map((entry) => entry?.id);
+
+  console.log("prod", productIds);
 
   const navigate = useNavigate();
 
@@ -32,9 +39,10 @@ function CheckoutPage() {
     },
   });
 
-  const onCheckoutPress = () => {
-    // Get all product Id
-    checkoutMUT.mutate(productIds);
+  const formMethods = useForm();
+
+  const onSubmitHandler = (data: any) => {
+    checkoutMUT.mutate({ address: data?.address });
   };
 
   return (
@@ -42,7 +50,10 @@ function CheckoutPage() {
       <h1 className="text-brand font-bold text-2xl">Checkout</h1>
 
       {cartData?.map((entry) => (
-        <div className="border py-2 px-4 w-fit my-4 rounded flex gap-x-4 w-full items-center justify-between">
+        <div
+          key={entry?.productId}
+          className="border py-2 px-4 w-fit my-4 rounded flex gap-x-4 w-full items-center justify-between"
+        >
           <div className="text-xl text-slate-7 font-bold">
             {entry?.product?.name}
           </div>
@@ -65,22 +76,73 @@ function CheckoutPage() {
       </div>
 
       <div className="my-8">
-        <label className="text-slate-6">Credit Card Number</label>
-        <TextInput />
+        <FormProvider {...formMethods}>
+          <form onSubmit={formMethods.handleSubmit(onSubmitHandler)}>
+            <label className="text-slate-6">Credit Card Number</label>
+            <Controller
+              name="ccNumber"
+              rules={{ required: "Field is required" }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextInput {...field} />
+                  <div className="text-red-5 text-sm">
+                    {fieldState?.error?.message ?? null}
+                  </div>
+                </>
+              )}
+            />
 
-        <label className="text-slate-6">Credit Card Expiry</label>
-        <TextInput />
+            <label className="text-slate-6">Credit Card Expiry</label>
+            <Controller
+              name="ccExpiry"
+              rules={{ required: "Field is required" }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextInput {...field} />
+                  <div className="text-red-5 text-sm">
+                    {fieldState?.error?.message ?? null}
+                  </div>
+                </>
+              )}
+            />
 
-        <label className="text-slate-6">Credit Card CC</label>
-        <TextInput />
+            <label className="text-slate-6">Credit Card CC</label>
+            <Controller
+              name="ccCC"
+              rules={{ required: "Field is required" }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextInput {...field} />
+                  <div className="text-red-5 text-sm">
+                    {fieldState?.error?.message ?? null}
+                  </div>
+                </>
+              )}
+            />
+
+            <label className="text-slate-6">Shipping Address</label>
+            <Controller
+              name="address"
+              rules={{ required: "Field is required" }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextAreaInput rows={5} {...field} />
+                  <div className="text-red-5 text-sm">
+                    {fieldState?.error?.message ?? null}
+                  </div>
+                </>
+              )}
+            />
+
+            <Button
+              className="mt-4 w-full flex items-center gap-x-2 justify-center"
+              type="submit"
+            >
+              <div>Pay</div>
+            </Button>
+          </form>
+        </FormProvider>
       </div>
-
-      <Button
-        className="w-full flex items-center gap-x-2 justify-center"
-        onPress={onCheckoutPress}
-      >
-        <div>Pay</div>
-      </Button>
     </div>
   );
 }

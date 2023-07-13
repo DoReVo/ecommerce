@@ -81,6 +81,7 @@ model UserCheckout {
   amount    Int
   data      Json     @db.Json
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  address   String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -98,8 +99,8 @@ model TemporaryFiles {
 }
 
 model ProductImages {
-  id        String @id @db.Text
-  productId String @map("product_id") @db.Uuid
+  id        String   @id @db.Text
+  productId String   @map("product_id") @db.Uuid
   fileName  String   @db.Text
   filePath  String
   mimeType  String

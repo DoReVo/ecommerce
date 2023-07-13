@@ -30,6 +30,8 @@ function PurchaseDataCard({ data }) {
 
       {expanded ? (
         <div>
+          <div className="font-bold mt-4 mb-2 border-b">Shipping Address</div>
+          <div className="whitespace-pre-line text-sm">{data?.address}</div>
           <div className="font-bold mt-4 mb-2 border-b">Items</div>
           {data?.data?.map((entry) => (
             <div className="flex gap-x-4">
